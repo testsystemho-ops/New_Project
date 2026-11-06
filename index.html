@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Out-of-Office Log</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bl:#0064e0;--bd:#0457cb;--gr:#31a24c;--or:#e8821a;--rd:#e41e3f;--ink:#1c1e21;--st:#5d6c7b;--hl:#dee3e9;--bg:#eef1f5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 'IBM Plex Sans Thai',sans-serif}
+.mono{font-family:'IBM Plex Mono',monospace}.hide{display:none!important}
+header{background:#fff;border-bottom:1px solid var(--hl)}
+.w{max-width:1360px;margin:auto;padding:0 16px}
+.top{display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap}
+.logo{width:36px;height:36px;border-radius:10px;background:var(--bl);color:#fff;display:grid;place-items:center;font-size:18px}
+.top h1{margin:0;font-size:15px}.top small{color:var(--st);font-size:12px}.sp{flex:1}
+.chip{border:1px solid var(--hl);background:var(--bg);border-radius:6px;padding:3px 10px;font-size:12px}
+.chip.ok{background:#e6f6ea;color:var(--gr);border-color:#a6dfb4;border-radius:100px}
+nav{display:flex;gap:4px;overflow-x:auto}nav button{border:0;background:none;padding:12px 16px;font:600 14px inherit;font-family:inherit;color:var(--st);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+nav button.on{color:var(--bl);border-color:var(--bl)}
+main{padding:20px 0 60px}
+.card{background:#fff;border:1px solid var(--hl);border-radius:20px;box-shadow:0 1px 4px rgba(20,22,26,.08);padding:20px;margin-bottom:16px}
+.card h3{margin:0 0 12px;font-size:15px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:16px}
+.k{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 1px 4px rgba(20,22,26,.08);border:1px solid var(--hl)}
+.k b{display:block;color:#fff;text-align:center;padding:8px;font-size:12px;letter-spacing:.5px}
+.k div{padding:14px 18px}.k .n{font-size:40px;font-weight:700;line-height:1.1;font-family:'IBM Plex Mono',monospace}.k span{color:var(--st);font-size:12px}
+.c-b b{background:linear-gradient(90deg,#0064e0,#0091ff)}.c-b .n{color:var(--bl)}
+.c-g b{background:linear-gradient(90deg,#31a24c,#42c75e)}.c-g .n{color:var(--gr)}
+.c-o b{background:linear-gradient(90deg,#e8821a,#f2a918)}.c-o .n{color:var(--or)}
+.c-r b{background:linear-gradient(90deg,#e41e3f,#f0284a)}.c-r .n{color:var(--rd)}
+.btn{border:0;border-radius:100px;padding:12px 26px;font:700 14px 'IBM Plex Sans Thai',sans-serif;cursor:pointer;background:var(--bl);color:#fff}
+.btn:hover{background:var(--bd)}.btn:disabled{background:#bcc0c4;cursor:not-allowed}
+.btn.g{background:var(--gr)}.btn.o{background:var(--or)}.btn.ghost{background:#fff;color:var(--ink);border:1px solid #ced0d4}.btn.sm{padding:5px 12px;font-size:12px}
+input,select{width:100%;height:44px;border:1px solid #ced0d4;border-radius:8px;padding:0 12px;font:inherit;background:#fff}
+input:focus{outline:0;border:2px solid #1876f2;padding:0 11px}
+label{display:block;font-weight:600;font-size:12px;color:var(--st);margin:12px 0 4px}
+.pill{border:1px solid #ced0d4;background:#fff;border-radius:100px;padding:6px 16px;font-weight:600;cursor:pointer}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.row>*{flex:1;min-width:140px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;color:var(--st);font-size:12px;padding:8px;border-bottom:2px solid var(--hl);white-space:nowrap}
+td{padding:8px;border-bottom:1px solid var(--hl);vertical-align:top}
+.tag{border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700}.t-o{background:#fff4d6;color:#b36b00}.t-d{background:#e6f6ea;color:var(--gr)}.t-x{background:#fde8ec;color:var(--rd)}
+.bars{display:flex;align-items:flex-end;gap:3px;height:150px;overflow-x:auto;padding-top:18px}
+.bar{flex:1;min-width:16px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:10px;color:var(--st)}
+.bar i{display:block;width:100%;background:linear-gradient(#0091ff,#0064e0);border-radius:4px 4px 0 0;min-height:2px}
+.hb{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}.hb u{flex:1;height:14px;background:var(--bg);border-radius:8px;text-decoration:none;overflow:hidden}.hb u i{display:block;height:100%;background:#9fdca9}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:800px){.grid2{grid-template-columns:1fr}}
+#login{max-width:400px;margin:8vh auto;padding:0 16px}
+.err{color:var(--rd);font-size:13px;margin-top:10px;min-height:18px}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:14px}.choice button{padding:28px 10px;border-radius:24px;border:2px solid var(--hl);background:#fff;font:700 20px 'IBM Plex Sans Thai',sans-serif;cursor:pointer}
+.choice button small{display:block;font-weight:400;font-size:12px;color:var(--st)}.choice button:disabled{opacity:.4;cursor:not-allowed}
+.choice .o:not(:disabled){border-color:var(--or);color:var(--or)}.choice .i:not(:disabled){border-color:var(--gr);color:var(--gr)}
+.big{font-size:34px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--or);text-align:center}
+</style></head><body>
+<div id="cfgwarn" class="hide card" style="max-width:600px;margin:40px auto"><h3>ยังไม่ได้ตั้งค่า Firebase</h3>เปิดไฟล์ index.html แล้วแก้ค่า <b>CFG</b> ด้านบนของ &lt;script&gt; ให้เป็น config ของโปรเจกต์ Firebase</div>
+<div id="login" class="hide"><div class="card"><div style="text-align:center"><div class="logo" style="margin:auto">🚪</div><h2 style="margin:10px 0 0">Out-of-Office Log</h2><small style="color:var(--st)">ระบบบันทึกเข้า-ออก พนักงาน</small></div>
+<label>ชื่อผู้ใช้ (User1 – User500 / Admin)</label><input id="lu" autocapitalize="off" autocomplete="username">
+<label>รหัสผ่าน</label><input id="lp" type="password" autocomplete="current-password">
+<div class="err" id="le"></div><button class="btn" style="width:100%;margin-top:6px" onclick="login()">เข้าสู่ระบบ</button>
+<p style="text-align:center;margin:14px 0 0"><a href="#" style="font-size:12px;color:var(--st)" onclick="setup();return false">ตั้งค่าระบบครั้งแรก (สร้าง Admin)</a></p></div></div>
+<div id="app" class="hide"><header><div class="w"><div class="top"><div class="logo">🚪</div><div><h1>Out-of-Office Log</h1><small>ระบบบันทึกเข้า-ออก พนักงาน · <span id="who"></span></small></div><div class="sp"></div>
+<span class="chip mono" id="dt"></span><span class="chip ok">● Synced</span><button class="btn ghost sm" id="pwb" onclick="adminPw()">เปลี่ยนรหัสผ่าน</button><button class="btn ghost sm" onclick="auth.signOut()">ออกจากระบบ</button></div>
+<nav id="nav" class="hide"></nav></div></header><main class="w" id="main"></main></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ===== แก้ค่าตรงนี้ให้เป็นของโปรเจกต์ Firebase ของคุณ =====
+const CFG={apiKey:"AIzaSyC11y9irgfQOCCzkc_c2Gou8JoEu_Wb5_A",authDomain:"asgm-88b77.firebaseapp.com",databaseURL:"https://asgm-88b77-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"asgm-88b77",storageBucket:"asgm-88b77.firebasestorage.app",messagingSenderId:"719903784554",appId:"1:719903784554:web:6a6992b7fab422f5a65413"};
+// ==========================================================
+const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mail=u=>u.trim().toLowerCase()+'@outoffice.local';
+let auth,db,auth2,off=0,me,isAdmin=false,prof={},R={},U={},S={},setting=false,view='choose',tab='dash',offs=[],page=0,timer;
+if(CFG.apiKey.startsWith('YOUR')){$('cfgwarn').classList.remove('hide')}else{
+ firebase.initializeApp(CFG);auth=firebase.auth();db=firebase.database();
+ auth2=firebase.initializeApp(CFG,'sec').auth();auth2.setPersistence(firebase.auth.Auth.Persistence.NONE);
+ db.ref('.info/serverTimeOffset').on('value',s=>off=s.val()||0);
+ auth.onAuthStateChanged(route);
+}
+const now=()=>Date.now()+off,TS=()=>firebase.database.ServerValue.TIMESTAMP;
+const dk=ms=>new Date(ms+25200000).toISOString().slice(0,10);
+const fD=ms=>new Date(ms).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Bangkok'});
+const fT=ms=>new Date(ms).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,timeZone:'Asia/Bangkok'});
+const dur=ms=>{const m=Math.max(0,Math.floor(ms/60000)),h=Math.floor(m/60);return h?h+' ชม. '+m%60+' นาที':m+' นาที'};
+setInterval(()=>{$('dt').textContent=new Date().toLocaleString('th-TH',{weekday:'short',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Bangkok'})},1000);
+const errTxt=e=>({'auth/invalid-credential':'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง','auth/wrong-password':'รหัสผ่านไม่ถูกต้อง','auth/user-not-found':'ไม่พบผู้ใช้','auth/too-many-requests':'ลองบ่อยเกินไป กรุณารอสักครู่','PERMISSION_DENIED':'ไม่มีสิทธิ์ทำรายการ'}[e.code]||e.message);
+function login(){$('le').textContent='';const u=$('lu').value,p=$('lp').value;if(!u||!p)return $('le').textContent='กรอกชื่อผู้ใช้และรหัสผ่าน';
+ auth.signInWithEmailAndPassword(mail(u),p).catch(e=>$('le').textContent=errTxt(e))}
+['lu','lp'].forEach(i=>$(i).addEventListener('keydown',e=>e.key==='Enter'&&login()));
+async function setup(){const p=prompt('ตั้งรหัสผ่าน Admin (อย่างน้อย 6 ตัวอักษร)\nใช้ได้เฉพาะครั้งแรกที่ยังไม่มี Admin');if(!p)return;
+ setting=true;try{const c=await auth.createUserWithEmailAndPassword(mail('admin'),p);
+  try{await db.ref('admins/'+c.user.uid).set(true)}catch(e){await c.user.delete();throw Error('มี Admin อยู่แล้ว ไม่สามารถสร้างซ้ำได้')}
+  setting=false;route(c.user)}catch(e){setting=false;$('le').textContent=e.code==='auth/email-already-in-use'?'มี Admin อยู่แล้ว กรุณาเข้าสู่ระบบ':errTxt(e)}}
+async function route(u){if(setting)return;offs.forEach(f=>f());offs=[];clearInterval(timer);R={};
+ if(!u){$('app').classList.add('hide');$('login').classList.remove('hide');return}
+ me=u;isAdmin=(await db.ref('admins/'+u.uid).once('value')).val()===true;
+ if(!isAdmin){const s=await db.ref('users/'+u.uid).once('value');prof=s.val();
+  if(!prof||!prof.active){await auth.signOut();$('le').textContent='บัญชีนี้ถูกปิดการใช้งานหรือยังไม่ได้ลงทะเบียน';return}}
+ $('login').classList.add('hide');$('app').classList.remove('hide');$('lp').value='';
+ $('who').textContent=isAdmin?'Admin':(prof.username+(prof.name?' · '+prof.name:''));$('pwb').classList.toggle('hide',!isAdmin);
+ isAdmin?adminInit():userInit()}
+// ================= USER =================
+function userInit(){$('nav').classList.add('hide');view='choose';
+ const q=db.ref('records').orderByChild('uid').equalTo(me.uid).limitToLast(30);
+ const f=q.on('value',s=>{R=s.val()||{};userRender()},e=>$('main').innerHTML='<div class="card">'+errTxt(e)+'</div>');offs.push(()=>q.off('value',f));
+ timer=setInterval(()=>{const o=$('live');if(o&&o.dataset.t)o.textContent=dur(now()-o.dataset.t)},1000)}
+const openRec=()=>Object.entries(R).find(([k,r])=>!r.inAt);
+function userRender(){const op=openRec(),hist=Object.entries(R).sort((a,b)=>b[1].outAt-a[1].outAt);let h='';
+ if(op&&view==='out')view='choose';if(!op&&view==='in')view='choose';
+ if(view==='choose')h=`<div class="card"><h3>เลือกรายการที่ต้องการบันทึก</h3><div class="choice"><button class="o" ${op?'disabled':''} onclick="view='out';userRender()">🚶 ออก<small>ขออนุญาตออกไปธุระส่วนตัว</small></button><button class="i" ${op?'':'disabled'} onclick="view='in';userRender()">🏢 กลับเข้า<small>บันทึกเมื่อกลับมาถึง</small></button></div>${op?`<p style="text-align:center;margin:16px 0 0">สถานะ: <span class="tag t-o">อยู่ข้างนอก</span> ตั้งแต่ ${fD(op[1].outAt)} ${fT(op[1].outAt)}</p>`:''}</div>`;
+ else if(view==='out'){const L=JSON.parse(localStorage.getItem('ooo_f')||'{}'),v=k=>esc(L[k]||(k==='name'?prof.name:k==='dept'?prof.dept:k==='brand'?prof.brand:'')||'');
+  h=`<div class="card"><h3>🚶 บันทึกออก</h3><label>ชื่อ - นามสกุล</label><input id="f_name" value="${v('name')}"><label>แผนก</label><input id="f_dept" value="${v('dept')}"><label>แบรนด์</label><input id="f_brand" value="${v('brand')}"><label>เหตุผล</label><input id="f_reason" placeholder="เช่น ธนาคาร / ธุระครอบครัว"><div class="err" id="fe"></div><p style="color:var(--st);font-size:12px">วันที่และเวลาจะถูกบันทึกอัตโนมัติเมื่อกดบันทึก</p><div style="display:flex;gap:10px"><button class="btn ghost" onclick="view='choose';userRender()">ย้อนกลับ</button><button class="btn o" id="sb" style="flex:1" onclick="saveOut()">บันทึกออก</button></div></div>`}
+ else{const r=op[1];h=`<div class="card"><h3>🏢 บันทึกกลับเข้า</h3><p>${esc(r.name)} · ${esc(r.dept)} · ${esc(r.brand)}<br>เหตุผล: ${esc(r.reason)}<br>ออกเมื่อ ${fD(r.outAt)} ${fT(r.outAt)}</p><div class="big" id="live" data-t="${r.outAt}">${dur(now()-r.outAt)}</div><div class="err" id="fe"></div><div style="display:flex;gap:10px;margin-top:14px"><button class="btn ghost" onclick="view='choose';userRender()">ย้อนกลับ</button><button class="btn g" style="flex:1" id="sb" onclick="saveIn('${op[0]}')">ยืนยันกลับเข้า</button></div></div>`}
+ h+=`<div class="card"><h3>ประวัติของฉัน</h3><div class="tw"><table><tr><th>วันที่</th><th>ออก</th><th>เข้า</th><th>ใช้เวลา</th><th>เหตุผล</th></tr>${hist.map(([k,r])=>`<tr><td>${fD(r.outAt)}</td><td class="mono">${fT(r.outAt)}</td><td class="mono">${r.inAt?fT(r.inAt):'<span class="tag t-o">ยังไม่กลับ</span>'}</td><td>${r.inAt?dur(r.inAt-r.outAt):'-'}</td><td>${esc(r.reason)}</td></tr>`).join('')||'<tr><td colspan=5 style="color:var(--st)">ยังไม่มีรายการ</td></tr>'}</table></div></div>`;
+ $('main').innerHTML='<div style="max-width:620px;margin:auto">'+h+'</div>'}
+function saveOut(){const d={};for(const k of['name','dept','brand','reason'])d[k]=$('f_'+k).value.trim();
+ if(Object.values(d).some(x=>!x))return $('fe').textContent='กรุณากรอกข้อมูลให้ครบทุกช่อง';
+ $('sb').disabled=true;try{localStorage.setItem('ooo_f',JSON.stringify(d))}catch(e){}
+ db.ref('records').push({uid:me.uid,...d,outAt:TS()}).then(()=>{view='choose'}).catch(e=>{$('sb').disabled=false;$('fe').textContent=errTxt(e)})}
+function saveIn(id){$('sb').disabled=true;db.ref('records/'+id).update({inAt:TS()}).then(()=>{view='choose'}).catch(e=>{$('sb').disabled=false;$('fe').textContent=errTxt(e)})}
+// ================= ADMIN =================
+function adminInit(){const n=$('nav');n.classList.remove('hide');tab='dash';page=0;
+ n.innerHTML=[['dash','📊 Dashboard'],['rec','📋 รายการทั้งหมด'],['usr','👥 จัดการผู้ใช้']].map(([k,t])=>`<button data-k="${k}" onclick="tab='${k}';page=0;adminRender()">${t}</button>`).join('');
+ const y=+dk(now()).slice(0,4)-1,st=Date.parse(y+'-01-01T00:00:00+07:00'),q=db.ref('records').orderByChild('outAt').startAt(st);let t;const sch=()=>{clearTimeout(t);t=setTimeout(adminRender,150)};
+ const a=q.on('child_added',s=>{R[s.key]=s.val();sch()}),b=q.on('child_changed',s=>{R[s.key]=s.val();sch()}),c=q.on('child_removed',s=>{delete R[s.key];sch()});
+ offs.push(()=>{q.off('child_added',a);q.off('child_changed',b);q.off('child_removed',c)});
+ const u=db.ref('users'),sc=db.ref('secrets');
+ const f1=u.on('value',s=>{U=s.val()||{};sch()}),f2=sc.on('value',s=>{S=s.val()||{};sch()});offs.push(()=>{u.off('value',f1);sc.off('value',f2)});
+ timer=setInterval(()=>{document.querySelectorAll('[data-lv]').forEach(e=>e.textContent=dur(now()-e.dataset.lv))},1000)}
+const fil={m:dk(Date.now()).slice(0,7),from:dk(Date.now()).slice(0,8)+'01',to:dk(Date.now()),q:'',uq:''};
+function adminRender(){if(!isAdmin)return;document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.k===tab));
+ const a=document.activeElement,id=a&&a.id,pos=a&&a.selectionStart;
+ $('main').innerHTML=tab==='dash'?dash():tab==='rec'?recs():usrs();
+ if(id&&$(id)){$(id).focus();try{$(id).setSelectionRange(pos,pos)}catch(e){}}}
+const uniq=a=>new Set(a.map(r=>r.uid)).size,cnt=(a,k)=>{const m={};a.forEach(r=>m[r[k]]=(m[r[k]]||0)+1);return Object.entries(m).sort((x,y)=>y[1]-x[1])};
+function dash(){const all=Object.values(R),td=dk(now()),m=fil.m,mr=all.filter(r=>dk(r.outAt).startsWith(m)),tr=all.filter(r=>dk(r.outAt)===td),out=Object.values(R).filter(r=>!r.inAt),done=mr.filter(r=>r.inAt);
+ const avg=done.length?dur(done.reduce((s,r)=>s+r.inAt-r.outAt,0)/done.length):'-';
+ const [yy,mm]=m.split('-').map(Number),days=new Date(yy,mm,0).getDate(),per=[];for(let d=1;d<=days;d++){const k=m+'-'+String(d).padStart(2,'0');per.push([d,uniq(mr.filter(r=>dk(r.outAt)===k))])}
+ const mx=Math.max(1,...per.map(p=>p[1])),dp=cnt(mr,'dept'),bp=cnt(mr,'brand'),dm=Math.max(1,dp[0]?dp[0][1]:1),bm=Math.max(1,bp[0]?bp[0][1]:1);
+ const hb=(l,x)=>l.slice(0,8).map(([n,c])=>`<div class="hb"><span style="width:110px">${esc(n)}</span><u><i style="width:${c/x*100}%"></i></u><b class="mono">${c}</b></div>`).join('')||'<span style="color:var(--st)">ไม่มีข้อมูล</span>';
+ return `<div class="row" style="margin-bottom:14px;max-width:300px"><div><label style="margin-top:0">เดือนที่ต้องการดู</label><input type="month" value="${m}" onchange="fil.m=this.value||fil.m;adminRender()"></div></div>
+ <div class="kpis"><div class="k c-b"><b>วันนี้ (คน)</b><div><div class="n">${uniq(tr)}</div><span>${tr.length} ครั้ง · วันที่ ${fD(Date.now())}</span></div></div>
+ <div class="k c-r"><b>กำลังอยู่ข้างนอก</b><div><div class="n">${out.length}</div><span>ยังไม่บันทึกกลับเข้า</span></div></div>
+ <div class="k c-g"><b>เดือนนี้ (คนทั้งหมด)</b><div><div class="n">${uniq(mr)}</div><span>${mr.length} ครั้ง</span></div></div>
+ <div class="k c-o"><b>เวลาเฉลี่ยต่อครั้ง</b><div><div class="n" style="font-size:24px;padding:8px 0">${avg}</div><span>เฉพาะรายการที่กลับแล้ว</span></div></div></div>
+ <div class="card"><h3>จำนวนคนที่ออก รายวัน (${m})</h3><div class="bars">${per.map(([d,c])=>`<div class="bar" title="วันที่ ${d}: ${c} คน">${c||''}<i style="height:${c/mx*100}%"></i><span>${d}</span></div>`).join('')}</div></div>
+ <div class="grid2"><div class="card"><h3>แยกตามแผนก</h3>${hb(dp,dm)}</div><div class="card"><h3>แยกตามแบรนด์</h3>${hb(bp,bm)}</div></div>
+ <div class="card"><h3>กำลังอยู่ข้างนอกขณะนี้</h3><div class="tw"><table><tr><th>ชื่อ</th><th>แผนก</th><th>แบรนด์</th><th>เหตุผล</th><th>ออกเมื่อ</th><th>ผ่านไป</th></tr>${out.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.dept)}</td><td>${esc(r.brand)}</td><td>${esc(r.reason)}</td><td class="mono">${fD(r.outAt)} ${fT(r.outAt)}</td><td><span class="tag t-o" data-lv="${r.outAt}">${dur(now()-r.outAt)}</span></td></tr>`).join('')||'<tr><td colspan=6 style="color:var(--st)">ไม่มี</td></tr>'}</table></div></div>`}
+function filtered(){const q=fil.q.toLowerCase();return Object.entries(R).filter(([k,r])=>{const d=dk(r.outAt);return d>=fil.from&&d<=fil.to&&(!q||[r.name,r.dept,r.brand,r.reason].join(' ').toLowerCase().includes(q))}).sort((a,b)=>b[1].outAt-a[1].outAt)}
+function recs(){const L=filtered(),P=50,pg=L.slice(page*P,page*P+P),un=id=>(U[id]||{}).username||'-';
+ return `<div class="card"><div class="row"><div><label>ตั้งแต่</label><input type="date" value="${fil.from}" onchange="fil.from=this.value;page=0;adminRender()"></div><div><label>ถึง</label><input type="date" value="${fil.to}" onchange="fil.to=this.value;page=0;adminRender()"></div><div><label>ค้นหา</label><input id="sq" value="${esc(fil.q)}" oninput="fil.q=this.value;page=0;adminRender()" placeholder="ชื่อ / แผนก / แบรนด์ / เหตุผล"></div><button class="btn" style="flex:0" onclick="exportX()">⬇ Excel</button></div></div>
+ <div class="card"><h3>รายการ ${L.length} รายการ</h3><div class="tw"><table><tr><th>วันที่</th><th>ชื่อ</th><th>แผนก</th><th>แบรนด์</th><th>เหตุผล</th><th>ออก</th><th>เข้า</th><th>ใช้เวลา</th><th>User</th><th></th></tr>${pg.map(([k,r])=>`<tr><td>${fD(r.outAt)}</td><td>${esc(r.name)}</td><td>${esc(r.dept)}</td><td>${esc(r.brand)}</td><td>${esc(r.reason)}</td><td class="mono">${fT(r.outAt)}</td><td class="mono">${r.inAt?fT(r.inAt):'<span class="tag t-o">ยังไม่กลับ</span>'}</td><td>${r.inAt?dur(r.inAt-r.outAt):'-'}</td><td>${esc(un(r.uid))}</td><td><button class="btn ghost sm" onclick="delRec('${k}')">ลบ</button></td></tr>`).join('')}</table></div>
+ <div style="margin-top:12px;display:flex;gap:8px;align-items:center"><button class="btn ghost sm" ${page?'':'disabled'} onclick="page--;adminRender()">‹</button><span>หน้า ${page+1}/${Math.max(1,Math.ceil(L.length/P))}</span><button class="btn ghost sm" ${(page+1)*P<L.length?'':'disabled'} onclick="page++;adminRender()">›</button></div></div>`}
+function exportX(){const rows=filtered().map(([k,r])=>({วันที่:fD(r.outAt),ชื่อ:r.name,แผนก:r.dept,แบรนด์:r.brand,เหตุผล:r.reason,เวลาออก:fT(r.outAt),เวลาเข้า:r.inAt?fT(r.inAt):'',ระยะเวลา:r.inAt?dur(r.inAt-r.outAt):'',ผู้ใช้:(U[r.uid]||{}).username||''}));
+ const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'OutLog');XLSX.writeFile(wb,'OutOfOffice_'+fil.from+'_'+fil.to+'.xlsx')}
+function delRec(k){if(confirm('ลบรายการนี้?'))db.ref('records/'+k).remove().catch(e=>alert(errTxt(e)))}
+function usrs(){const q=fil.uq.toLowerCase(),L=Object.entries(U).filter(([k,u])=>!q||(u.username+' '+(u.name||'')).toLowerCase().includes(q)).sort((a,b)=>a[1].num-b[1].num);
+ return `<div class="card"><h3>สร้างผู้ใช้เป็นชุด (User1 – User500)</h3><div class="row"><div><label>เริ่มที่ User</label><input id="bf" type="number" value="1" min="1" max="500"></div><div><label>ถึง User</label><input id="bt" type="number" value="500" min="1" max="500"></div><div><label>รหัสผ่านเริ่มต้น (≥6 ตัว)</label><input id="bp" value="123456"></div><button class="btn" style="flex:0" id="bgo" onclick="bulk()">สร้างผู้ใช้</button></div><div id="bst" style="margin-top:10px;color:var(--st)"></div></div>
+ <div class="card"><div class="row"><h3 style="flex:2;margin:0">ผู้ใช้ทั้งหมด ${Object.keys(U).length} บัญชี</h3><input id="uq" placeholder="ค้นหา User / ชื่อ" value="${esc(fil.uq)}" oninput="fil.uq=this.value;adminRender()"></div><div class="tw" style="margin-top:10px"><table><tr><th>User</th><th>ชื่อ</th><th>รหัสผ่าน</th><th>สถานะ</th><th></th></tr>${L.slice(0,100).map(([k,u])=>`<tr><td><b>${esc(u.username)}</b></td><td>${esc(u.name||'-')}</td><td class="mono"><a href="#" onclick="this.textContent='${esc(S[k]||'?')}';return false" style="color:var(--st)">แสดง</a></td><td><span class="tag ${u.active?'t-d':'t-x'}">${u.active?'ใช้งาน':'ปิด'}</span></td><td style="white-space:nowrap"><button class="btn ghost sm" onclick="chPw('${k}')">เปลี่ยนรหัส</button> <button class="btn ghost sm" onclick="edU('${k}')">แก้ไขข้อมูล</button> <button class="btn ghost sm" onclick="tgU('${k}')">${u.active?'ปิด':'เปิด'}</button></td></tr>`).join('')}</table></div>${L.length>100?'<p style="color:var(--st)">แสดง 100 แรก — ใช้ช่องค้นหาเพื่อหาเพิ่ม</p>':''}</div>`}
+let stop=false;
+async function bulk(){const f=+$('bf').value,t=+$('bt').value,pw=$('bp').value;if(!(f>=1&&t<=500&&f<=t)||pw.length<6)return alert('ตรวจสอบช่วงตัวเลข (1–500) และรหัสผ่านอย่างน้อย 6 ตัว');
+ const have=new Set(Object.values(U).map(u=>u.username.toLowerCase()));stop=false;$('bgo').textContent='ยกเลิก';$('bgo').onclick=()=>stop=true;let ok=0,sk=0,bad=[];
+ for(let i=f;i<=t&&!stop;i++){const un='User'+i,st=$('bst');if(st)st.textContent=`กำลังสร้าง ${un} (${i-f+1}/${t-f+1}) สำเร็จ ${ok} ข้าม ${sk}`;
+  if(have.has(un.toLowerCase())){sk++;continue}
+  for(let tr=0;tr<4;tr++){try{const c=await auth2.createUserWithEmailAndPassword(mail(un),pw),uid=c.user.uid;await auth2.signOut();
+    await db.ref().update({['users/'+uid]:{username:un,num:i,name:'',dept:'',brand:'',active:true,createdAt:TS()},['secrets/'+uid]:pw});ok++;break}
+   catch(e){if(e.code==='auth/too-many-requests'){await new Promise(r=>setTimeout(r,6000));continue}if(e.code==='auth/email-already-in-use')bad.push(un+' (มีใน Auth แล้วแต่ไม่มีในระบบ)');else bad.push(un+': '+e.message);break}}
+  await new Promise(r=>setTimeout(r,250))}
+ alert(`เสร็จสิ้น สร้างใหม่ ${ok} · ข้าม ${sk}`+(bad.length?'\nมีปัญหา:\n'+bad.slice(0,10).join('\n'):''));adminRender()}
+async function chPw(k){const u=U[k],np=prompt('รหัสผ่านใหม่ของ '+u.username+' (อย่างน้อย 6 ตัว)');if(!np)return;if(np.length<6)return alert('สั้นเกินไป');
+ try{const c=await auth2.signInWithEmailAndPassword(mail(u.username),S[k]||'');await c.user.updatePassword(np);await auth2.signOut();await db.ref('secrets/'+k).set(np);alert('เปลี่ยนรหัสผ่านแล้ว')}
+ catch(e){alert('เปลี่ยนไม่สำเร็จ: '+errTxt(e)+(e.code==='auth/invalid-credential'?'\n(รหัสที่เก็บในระบบไม่ตรงกับ Auth)':''))}}
+function edU(k){const u=U[k],n=prompt('ชื่อ-นามสกุล',u.name||'');if(n===null)return;const d=prompt('แผนก',u.dept||'');if(d===null)return;const b=prompt('แบรนด์',u.brand||'');if(b===null)return;
+ db.ref('users/'+k).update({name:n.trim(),dept:d.trim(),brand:b.trim()}).catch(e=>alert(errTxt(e)))}
+function tgU(k){db.ref('users/'+k+'/active').set(!U[k].active).catch(e=>alert(errTxt(e)))}
+async function adminPw(){const o=prompt('รหัสผ่านปัจจุบัน');if(!o)return;const n=prompt('รหัสผ่านใหม่ (อย่างน้อย 6 ตัว)');if(!n||n.length<6)return;
+ try{await me.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(me.email,o));await me.updatePassword(n);alert('เปลี่ยนรหัสผ่าน Admin แล้ว')}catch(e){alert(errTxt(e))}}
+</script></body></html>
